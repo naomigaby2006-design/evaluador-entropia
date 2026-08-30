@@ -115,18 +115,17 @@ function calcularPenalizaciones(password, entropiaBase) {
         const body = document.body;
         const contenedor = document.querySelector(".contenedor-principal");
 
-        if (entropia === 0) {
-            // Estado Neutro (Sin contraseña)
-            barraFortaleza.style.backgroundColor = "#e0e0e0";
-            barraFortaleza.style.width = "100%";
-            txtEstado.textContent = "Esperando contraseña...";
-            
-            // Efectos globales neutros
-            body.style.backgroundColor = "#f4f7f6"; // Color original del fondo (gris muy claro)
-            contenedor.classList.remove("alerta-debil");
-            contenedor.style.boxShadow = "0 4px 10px rgba(0,0,0,0.1)"; // Sombra normal
-            
-        } else if (entropia < 40) {
+       if (entropia === 0 && inputClave.value === "") {
+        barraFortaleza.style.width = "0%";
+        barraFortaleza.style.backgroundColor = "var(--color-borde)"; 
+        txtEstado.textContent = "Esperando contraseña...";
+        
+        // Limpiamos los efectos de temblor por si acaso
+        document.body.style.backgroundColor = "var(--color-fondo)";
+        document.querySelector(".contenedor-principal").classList.remove("alerta-debil");
+        return;
+    }
+        else if (entropia < 40) {
             // Estado Débil (Alerta)
             barraFortaleza.style.backgroundColor = "#ff4d4d";
             barraFortaleza.style.width = "33%";
