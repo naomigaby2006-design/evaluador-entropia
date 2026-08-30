@@ -43,20 +43,56 @@ document.addEventListener("DOMContentLoaded", () => {
         let penalizacion = 0;
         const p = password.toLowerCase();
         
-        const secuenciasDebiles = ["qwerty", "asdfgh", "12345", "123456", "987654", "password", "contraseña", "123123"];
-        for (let i = 0; i < secuenciasDebiles.length; i++) {
-            if (p.includes(secuenciasDebiles[i])) {
-                penalizacion += 25;
-                break;
+        // 1. Repetición Extrema (Caso: 888888888888888)
+        // La expresión ^(.)\1+$ detecta si TODA la clave es el mismo caracter
+        if (/^(.)\1+$/.test(p)) {
+            return 0; // Destruimos la entropía por completo
+        }
+
+        // 2. Diccionario de Nombres Propios y Secuencias 
+       const diccionario = [
+            // Patrones de teclado y secuencias
+            "qwerty", "asdfgh", "zxcvbn", "password", "contraseña", "admin", 
+            "12345", "54321", "67890", "09876", "abcdef",
+            
+            // Nombres específicos solicitados
+            "naomi", "valeria", "rafael", "pedro",
+            
+            // 100 nombres más comunes (sin tildes para abarcar más variaciones)
+            "antonio", "jose", "manuel", "francisco", "david", "juan", "luis", 
+            "carlos", "javier", "jesus", "daniel", "alejandro", "miguel", "jorge", 
+            "angel", "pablo", "sergio", "fernando", "andres", "santiago", "diego", 
+            "victor", "hugo", "ruben", "ivan", "guillermo", "alvaro", "oscar", 
+            "mario", "roberto", "ramon", "julian", "nicolas", "gabriel", "samuel", 
+            "martin", "sebastian", "lucas", "mateo", "leonardo", "felipe", "hector", 
+            "ricardo", "raul", "arturo", "enrique", "gerardo", "alberto", "emilio", 
+            "joaquin", "marcelo", "ignacio", "rodrigo", "tomas", "matias",
+            "maria", "carmen", "ana", "isabel", "laura", "cristina", "marta", "rosa", 
+            "andrea", "paula", "elena", "teresa", "raquel", "sofia", "pilar", 
+            "silvia", "lucia", "julia", "alba", "victoria", "patricia", "alicia", 
+            "rocio", "beatriz", "natalia", "lorena", "claudia", "eva", "mercedes", 
+            "susana", "leticia", "sandra", "camila", "valentina", "isabella", 
+            "emma", "catalina", "martina", "julieta", "antonia"
+        ];
+        
+        for (let i = 0; i < diccionario.length; i++) {
+            if (p.includes(diccionario[i])) {
+                penalizacion += 35; // Aumentamos el castigo a 35 bits
             }
         }
 
-        if (/(.)\1{2,}/.test(p)) penalizacion += 15;
-        if (/^[0-9]+$/.test(p) || /^[a-z]+$/.test(p)) penalizacion += 10;
+        // 3. Repeticiones parciales (ej. hola8888mundo)
+        if (/(.)\1{2,}/.test(p)) {
+            penalizacion += 15;
+        }
+
+        // 4. Falta de variedad (Solo números o solo letras)
+        if (/^[0-9]+$/.test(p) || /^[a-z]+$/.test(p)) {
+            penalizacion += 15;
+        }
 
         return Math.max(0, entropiaBase - penalizacion);
     }
-
     // 5. Formatear Tiempo
     function formatearTiempo(segundos) {
         if (segundos === 0 || isNaN(segundos) || !isFinite(segundos)) return "0 segundos";
@@ -121,9 +157,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 7. Procesamiento Principal
     function procesarDatos() {
-        const clave = inputClave.value;
+       const clave = inputClave.value;
         
-        // Si borraron todo, reiniciamos la interfaz
+        // Si borraron todo
         if (clave === "") {
             txtEntropia.textContent = "0 bits";
             txtEspacio.textContent = "0 combinaciones posibles";
@@ -132,8 +168,24 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        // REGLA NUEVA: Consenso general de longitud mínima (8 caracteres)
+        if (clave.length < 8) {
+            txtEntropia.textContent = "0 bits";
+            txtEspacio.textContent = "Longitud insuficiente";
+            txtTiempo.textContent = "0 segundos";
+            
+            barraFortaleza.style.backgroundColor = "#ff4d4d";
+            barraFortaleza.style.width = "10%";
+            txtEstado.textContent = "Muy corta (Mínimo 8 caracteres)";
+            
+            document.body.style.backgroundColor = "#ffe6e6"; 
+            document.querySelector(".contenedor-principal").classList.add("alerta-debil");
+            return; // Detenemos los cálculos aquí
+        }
+
         const calculos = calcularMatematicaContrasena(clave);
         const entropiaReal = calcularPenalizaciones(clave, calculos.entropia);
+        
 
         txtEntropia.textContent = entropiaReal.toFixed(2) + " bits";
         
