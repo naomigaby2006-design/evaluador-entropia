@@ -81,8 +81,17 @@ function calcularPenalizaciones(password, entropiaBase) {
             penalizacion += (tamañoTrampa * 5); 
         }
 
-        // 4. Castigos por repeticiones parciales y falta de variedad
-        if (/(.)\1{2,}/.test(p)) penalizacion += 15;
+       // 4. Castigo dinámico por caracteres idénticos consecutivos (Parche del "9" oculto)
+        // La 'g' al final busca TODAS las rachas de letras/números repetidos en la cadena
+        const repeticionesSimples = p.match(/(.)\1{2,}/g); 
+        if (repeticionesSimples) {
+            repeticionesSimples.forEach(racha => {
+                // Destruye 5 bits por cada carácter inútil ingresado en la racha
+                penalizacion += (racha.length * 5); 
+            });
+        }
+
+        // 5. Falta de variedad (Solo números o solo letras)
         if (/^[0-9]+$/.test(p) || /^[a-z]+$/.test(p)) penalizacion += 15;
 
         // Retornar asegurando que no existan valores negativos
