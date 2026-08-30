@@ -180,9 +180,9 @@ body {
 /* Creamos una animación de "temblor" para cuando la clave sea muy mala */
 @keyframes temblor {
     0% { transform: translateX(0); }
-    25% { transform: translateX(-3px) rotate(-1deg); }
-    50% { transform: translateX(3px) rotate(1deg); }
-    75% { transform: translateX(-3px) rotate(-1deg); }
+    25% { transform: translateX(-2px) rotate(-1deg); }
+    50% { transform: translateX(2px) rotate(1deg); }
+    75% { transform: translateX(-2px) rotate(-1deg); }
     100% { transform: translateX(0); }
 }
 

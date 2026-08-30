@@ -37,63 +37,55 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 4. Seguridad y Validaciones (Rol de Persona 3)
-    function calcularPenalizaciones(password, entropiaBase) {
+function calcularPenalizaciones(password, entropiaBase) {
         if (entropiaBase === 0) return 0;
         
         let penalizacion = 0;
         const p = password.toLowerCase();
         
-        // 1. Repetición Extrema (Caso: 888888888888888)
-        // La expresión ^(.)\1+$ detecta si TODA la clave es el mismo caracter
-        if (/^(.)\1+$/.test(p)) {
-            return 0; // Destruimos la entropía por completo
-        }
+        // 1. Repetición absoluta de un solo carácter (Destrucción total)
+        if (/^(.)\1+$/.test(p)) return 0;
 
-        // 2. Diccionario de Nombres Propios y Secuencias 
-       const diccionario = [
-            // Patrones de teclado y secuencias
+        // 2. Diccionario de Nombres, Secuencias y Contexto Local
+        const diccionario = [
             "qwerty", "asdfgh", "zxcvbn", "password", "contraseña", "admin", 
-            "12345", "54321", "67890", "09876", "abcdef",
-            
-            // Nombres específicos solicitados
-            "naomi", "valeria", "rafael", "pedro",
-            
-            // 100 nombres más comunes (sin tildes para abarcar más variaciones)
-            "antonio", "jose", "manuel", "francisco", "david", "juan", "luis", 
-            "carlos", "javier", "jesus", "daniel", "alejandro", "miguel", "jorge", 
-            "angel", "pablo", "sergio", "fernando", "andres", "santiago", "diego", 
-            "victor", "hugo", "ruben", "ivan", "guillermo", "alvaro", "oscar", 
-            "mario", "roberto", "ramon", "julian", "nicolas", "gabriel", "samuel", 
-            "martin", "sebastian", "lucas", "mateo", "leonardo", "felipe", "hector", 
-            "ricardo", "raul", "arturo", "enrique", "gerardo", "alberto", "emilio", 
-            "joaquin", "marcelo", "ignacio", "rodrigo", "tomas", "matias",
-            "maria", "carmen", "ana", "isabel", "laura", "cristina", "marta", "rosa", 
-            "andrea", "paula", "elena", "teresa", "raquel", "sofia", "pilar", 
-            "silvia", "lucia", "julia", "alba", "victoria", "patricia", "alicia", 
-            "rocio", "beatriz", "natalia", "lorena", "claudia", "eva", "mercedes", 
-            "susana", "leticia", "sandra", "camila", "valentina", "isabella", 
-            "emma", "catalina", "martina", "julieta", "antonia"
+            "123456789", "987654321", "12345", "54321", "67890", "09876", "abcdef", 
+            "espol", "guayaquil", "ecuador", 
+            "naomi", "valeria", "rafael", "pedro", "antonio", "jose", "manuel", 
+            "francisco", "david", "juan", "luis", "carlos", "javier", "jesus", 
+            "daniel", "alejandro", "miguel", "jorge", "angel", "pablo", "sergio", 
+            "fernando", "andres", "santiago", "diego", "victor", "hugo", "ruben", 
+            "ivan", "guillermo", "alvaro", "oscar", "mario", "roberto", "ramon", 
+            "julian", "nicolas", "gabriel", "samuel", "martin", "sebastian", "lucas", 
+            "mateo", "leonardo", "felipe", "hector", "ricardo", "raul", "arturo", 
+            "enrique", "gerardo", "alberto", "emilio", "joaquin", "marcelo", "ignacio", 
+            "rodrigo", "tomas", "matias", "maria", "carmen", "ana", "isabel", "laura", 
+            "cristina", "marta", "rosa", "andrea", "paula", "elena", "teresa", 
+            "raquel", "sofia", "pilar", "silvia", "lucia", "julia", "alba", "victoria", 
+            "patricia", "alicia", "rocio", "beatriz", "natalia", "lorena", "claudia", 
+            "eva", "mercedes", "susana", "leticia", "sandra", "camila", "valentina", 
+            "isabella", "emma", "catalina", "martina", "julieta", "antonia"
         ];
         
         for (let i = 0; i < diccionario.length; i++) {
             if (p.includes(diccionario[i])) {
-                penalizacion += 35; // Aumentamos el castigo a 35 bits
+                penalizacion += 35;
+                break; 
             }
         }
 
-        // 3. Repeticiones parciales (ej. hola8888mundo)
-        if (/(.)\1{2,}/.test(p)) {
-            penalizacion += 15;
+        // 3. Castigo Dinámico por Bloques (Intercepta bucles exactos)
+        const repeticionBloque = p.match(/(.{2,})\1+/);
+        if (repeticionBloque) {
+            const tamañoTrampa = repeticionBloque[0].length;
+            penalizacion += (tamañoTrampa * 5); 
         }
 
-        // 4. Falta de variedad (Solo números o solo letras)
-        if (/^[0-9]+$/.test(p) || /^[a-z]+$/.test(p)) {
-            penalizacion += 15;
-        }
-        if (/(.{2,})\1+/.test(p)) {
-        penalizacion += 30;
-}
+        // 4. Castigos por repeticiones parciales y falta de variedad
+        if (/(.)\1{2,}/.test(p)) penalizacion += 15;
+        if (/^[0-9]+$/.test(p) || /^[a-z]+$/.test(p)) penalizacion += 15;
 
+        // Retornar asegurando que no existan valores negativos
         return Math.max(0, entropiaBase - penalizacion);
     }
     // 5. Formatear Tiempo
