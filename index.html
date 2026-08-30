@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluador de Entropía de Contraseñas</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <main class="contenedor-principal">
+        <header>
+            <h1>Evaluador Matemático de Entropía</h1>
+            <p>Descubre la resistencia de tu contraseña mediante combinatoria con repetición.</p>
+        </header>
+
+        <section class="area-ingreso">
+            <div class="grupo-input">
+                <label for="input-contrasena">Ingresa tu contraseña:</label>
+                <input type="text" id="input-contrasena" placeholder="Escribe aquí tu clave...">
+            </div>
+
+            <div class="grupo-input">
+                <label for="select-velocidad">Simular velocidad de ataque (Fuerza Bruta):</label>
+                <select id="select-velocidad">
+                    <option value="computadora">PC de Escritorio Estándar (100 Millones de intentos/seg)</option>
+                    <option value="gpu">Arreglo de GPUs Moderno (50 Mil Millones de intentos/seg)</option>
+                    <option value="supercomputadora">Súper Computadora / Nube (1 Billón de intentos/seg)</option>
+                </select>
+            </div>
+        </section>
+
+        <section class="area-resultados">
+            <h2>Resultados del Análisis</h2>
+            
+            <div class="tarjeta-resultado">
+                <h3>Entropía (Seguridad)</h3>
+                <p id="resultado-entropia">0 bits</p> 
+            </div>
+
+            <div class="tarjeta-resultado">
+                <h3>Espacio Muestral ($N^L$)</h3>
+                <p id="resultado-espacio">0 combinaciones posibles</p> 
+            </div>
+
+            <div class="tarjeta-resultado">
+                <h3>Tiempo Estimado de Descifrado</h3>
+                <p id="resultado-tiempo">0 segundos</p> 
+            </div>
+        </section>
+
+        <section class="area-visual">
+            <h3>Nivel de Fortaleza</h3>
+            <div class="contenedor-barra">
+                <div id="barra-fortaleza" class="barra-base"></div>
+            </div>
+            <p id="texto-fortaleza">Esperando contraseña...</p>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
