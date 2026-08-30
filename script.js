@@ -90,17 +90,21 @@ document.addEventListener("DOMContentLoaded", () => {
         if (/^[0-9]+$/.test(p) || /^[a-z]+$/.test(p)) {
             penalizacion += 15;
         }
+        if (/(.{2,})\1+/.test(p)) {
+        penalizacion += 30;
+}
 
         return Math.max(0, entropiaBase - penalizacion);
     }
     // 5. Formatear Tiempo
-    function formatearTiempo(segundos) {
+   function formatearTiempo(segundos) {
         if (segundos === 0 || isNaN(segundos) || !isFinite(segundos)) return "0 segundos";
         if (segundos < 60) return segundos.toFixed(2) + " segundos";
         if (segundos < 3600) return (segundos / 60).toFixed(1) + " minutos";
         if (segundos < 86400) return (segundos / 3600).toFixed(1) + " horas";
         if (segundos < 31536000) return (segundos / 86400).toFixed(1) + " días";
-        return (segundos / 31536000).toFixed(1) + " años";
+        if (segundos < 3153600000) return (segundos / 31536000).toFixed(1) + " años";
+        return (segundos / 3153600000).toFixed(1) + " siglos";
     }
 
     // 6. Colores de la Barra
